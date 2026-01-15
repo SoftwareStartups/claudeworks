@@ -1,0 +1,27 @@
+{
+  "name": "claudeworks",
+  "description": "Claude plugin marketplace for Python tools",
+  "owner": {
+    "name": "SoftwareStartups",
+    "url": "https://github.com/SoftwareStartups"
+  },
+  "keywords": [
+    "python",
+    "workflow",
+    "git"
+  ],
+  "plugins": [
+    {
+      "name": "python-tools",
+      "description": "Python development tools for Claude Code workflows",
+      "source": "./plugins/python-tools",
+      "category": "development"
+    },
+    {
+      "name": "workflow",
+      "description": "Git workflow tools for clean commits and rebasing",
+      "source": "./plugins/workflow",
+      "category": "development"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "workflow",
+  "version": "0.1.0",
+  "description": "Git workflow tools for clean commits and rebasing",
+  "author": {
+    "name": "SoftwareStartups",
+    "url": "https://github.com/SoftwareStartups"
+  }
+}

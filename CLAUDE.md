@@ -4,21 +4,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ClaudeWorks - A Claude plugin marketplace for Python tools. Contains reusable skills and utilities for Claude Code workflows.
+ClaudeWorks - A Claude Code plugin marketplace with skills for Python development and git workflows.
 
 ## Commands
 
 ```bash
-make install     # Install python dependencies
-make format      # Format code with ruff
-make lint        # Lint code with ruff
-make lint-fix    # Auto-fix linting issues
-make typecheck   # Type check with pyright
-make check       # Run lint + typecheck
-make test        # Run tests
-make test-cov    # Run tests with coverage
-make clean       # Remove build artifacts and caches
-make all         # Run all checks and tests
+task install     # Install python dependencies
+task format      # Format code with ruff
+task lint        # Lint code with ruff
+task lint-fix    # Auto-fix linting issues
+task typecheck   # Type check with pyright
+task validate    # Validate marketplace and plugin manifests
+task check       # Run lint + typecheck + validate
+task test        # Run tests
+task test-cov    # Run tests with coverage
+task clean       # Remove build artifacts and caches
+task all         # Run all checks and tests
 ```
 
 ## Code Style
@@ -29,10 +30,10 @@ make all         # Run all checks and tests
 
 ## Structure
 
-- `plugins/` - Claude Code plugins (skills, commands)
-  - `python-tools/` - Python development tools (update-deps)
-  - `workflow/` - Git workflow tools (git-rebase)
-- `shared/` - Shared utilities across plugins
+- `plugins/` - Claude Code plugins (skills)
+  - `python-tools/` - Python development tools (update-deps, with bundled `update_deps.py`)
+  - `workflow/` - Git workflow tools (git-rebase, cleanup-commits)
+- `tests/` - Tests for bundled scripts (script dirs are on the pytest/pyright path)
 
 ## Plugin Format
 
@@ -42,5 +43,12 @@ Skills live in `plugins/<plugin-name>/skills/<skill-name>/SKILL.md` with YAML fr
 name: skill-name
 description: When to use this skill
 context: fork # optional for executing the skill in a sub agent
+disable-model-invocation: true # optional, only runs via /skill-name
 ---
 ```
+
+- Prefer `skills/` over `commands/` for new user-invocable entries.
+- Bundled scripts sit next to SKILL.md and are referenced as `${CLAUDE_SKILL_DIR}/script.py`.
+  Make them self-contained with PEP 723 inline dependencies so `uv run` works anywhere.
+- Plugins are copied into a cache on install, so they cannot import code from outside their own directory.
+- Bump `version` in the plugin's `plugin.json` on every change, or users keep the old copy.

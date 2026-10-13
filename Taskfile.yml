@@ -1,0 +1,67 @@
+version: "3"
+
+tasks:
+  install:
+    desc: Install dependencies
+    cmds:
+      - uv sync
+
+  format:
+    desc: Format code
+    cmds:
+      - uv run ruff format .
+
+  lint:
+    desc: Lint code
+    cmds:
+      - uv run ruff check .
+
+  lint-fix:
+    desc: Fix linting issues automatically
+    cmds:
+      - uv run ruff check . --fix
+
+  typecheck:
+    desc: Type check with pyright
+    cmds:
+      - uv run pyright
+
+  validate:
+    desc: Validate marketplace and plugin manifests
+    cmds:
+      - claude plugin validate . --strict
+      - for: { var: PLUGINS }
+        cmd: claude plugin validate {{.ITEM}} --strict
+    vars:
+      PLUGINS:
+        sh: ls -d plugins/*/
+
+  check:
+    desc: Run lint, typecheck and manifest validation
+    cmds:
+      - task: lint
+      - task: typecheck
+      - task: validate
+
+  test:
+    desc: Run tests
+    cmds:
+      - uv run pytest
+
+  test-cov:
+    desc: Run tests with coverage
+    cmds:
+      - uv run pytest --cov
+
+  clean:
+    desc: Remove build artifacts and caches
+    cmds:
+      - rm -rf .pytest_cache .ruff_cache .pyright __pycache__ .coverage htmlcov
+      - find . -type d -name "__pycache__" -exec rm -rf {} +
+      - find . -type f -name "*.pyc" -delete
+
+  all:
+    desc: Run all checks and tests
+    cmds:
+      - task: check
+      - task: test

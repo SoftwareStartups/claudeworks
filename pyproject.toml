@@ -1,17 +1,22 @@
 [project]
 name = "claudeworks"
 version = "0.1.0"
-description = "Claude plugin marketplace for Python tools"
+description = "Claude Code plugin marketplace for development workflows"
 requires-python = ">=3.12"
 dependencies = []
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
+    "packaging>=24",
+    "pyright>=1.1",
     "pytest>=8.0",
     "pytest-cov>=4.0",
-    "pyright>=1.1",
     "ruff>=0.4",
+    "tomlkit>=0.13",
 ]
+
+[tool.uv]
+package = false
 
 [tool.ruff]
 line-length = 100
@@ -23,3 +28,11 @@ select = ["E", "F", "I", "N", "W", "UP"]
 [tool.pyright]
 pythonVersion = "3.12"
 typeCheckingMode = "strict"
+extraPaths = ["plugins/python-tools/skills/update-deps"]
+exclude = [".venv"]
+venvPath = "."
+venv = ".venv"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["plugins/python-tools/skills/update-deps"]

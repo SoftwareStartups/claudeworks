@@ -1,6 +1,6 @@
 # ClaudeWorks
 
-A Claude Code plugin marketplace for Python tools. Contains reusable skills and utilities for Claude Code workflows.
+A Claude Code plugin marketplace with skills for Python development and git workflows.
 
 ## Installation
 
@@ -33,25 +33,27 @@ See [Claude Code plugin docs](https://code.claude.com/docs/en/plugins) for more 
 
 Python development tools for Claude Code workflows.
 
-- **update-deps** - Update Python dependencies to latest stable versions in uv workspaces
+- **update-deps** - Bump pyproject.toml dependencies to the latest stable PyPI releases (uv projects and workspaces), then sync and run the tests
 
 ### workflow
 
 Git workflow tools for clean commits and rebasing.
 
-- **git-rebase** - Create clean, reviewable commits using --fixup and interactive rebase
-  - `/cleanup-commits` - Interactive command to group and squash commits before PR
+- **git-rebase** - Create clean, reviewable commits using `--fixup` and autosquash rebase
+- **cleanup-commits** - `/cleanup-commits`, groups and squashes the branch's commits before a PR (manual invocation only)
 
 ## Development
 
 For contributing to this repository:
 
 ```bash
-make install    # Install dependencies
-make check      # Run lint + typecheck
-make test       # Run tests
-make all        # Run all checks and tests
+task install    # Install dependencies
+task check      # Run lint, typecheck and plugin manifest validation
+task test       # Run tests
+task all        # Run all checks and tests
 ```
+
+Bump `version` in a plugin's `.claude-plugin/plugin.json` when changing it. Installed copies only update when the version changes.
 
 ## License
 

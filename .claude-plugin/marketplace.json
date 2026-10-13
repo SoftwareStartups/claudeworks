@@ -1,15 +1,10 @@
 {
   "name": "claudeworks",
-  "description": "Claude plugin marketplace for Python tools",
+  "description": "Claude Code plugins for Python development and git workflows",
   "owner": {
     "name": "SoftwareStartups",
     "url": "https://github.com/SoftwareStartups"
   },
-  "keywords": [
-    "python",
-    "workflow",
-    "git"
-  ],
   "plugins": [
     {
       "name": "python-tools",

@@ -1,117 +1,94 @@
 ---
 name: git-rebase
-description: Use when committing changes to code already committed in the current branch, or when preparing commits for PR review. Creates clean, reviewable commits using --fixup and interactive rebase.
+description: Use when committing changes to code already committed in the current branch, or when preparing commits for PR review. Creates clean, reviewable commits using --fixup and autosquash rebase.
 ---
 
 # Git Rebase for Clean Commits
+
+Rebase commands below run without opening an editor, so they work from Claude Code.
 
 ## Commit Strategy
 
 | Scenario | Action |
 |----------|--------|
 | New feature/logical change | `git commit -m "feat: add X"` |
-| Editing code from previous commit in this branch | `git commit --fixup=<commit-hash>` |
+| Editing code from a previous commit in this branch | `git commit --fixup=<commit-hash>` |
 
 **Finding the right commit to fixup:**
 
 ```bash
-git log --oneline                    # List commits with hashes
-git show -s --format=%s <commit>     # View commit message to confirm
+git log --oneline origin/main..HEAD   # Commits in this branch
+git log --oneline -- <file>           # Commits that touched a file
 ```
 
 ## Squash Workflow
 
-**1. Sync with remote:**
+**1. Squash fixups into their targets:**
 ```bash
-git fetch
-git status
-# If behind: git pull
+GIT_SEQUENCE_EDITOR=true git rebase -i --autosquash $(git merge-base HEAD origin/main)
 ```
 
-**2. Squash fixups into clean commits:**
+**2. Rebase onto the latest main:**
 ```bash
-git rebase -i --autosquash <first-commit-in-branch>~
+git fetch origin
+git rebase origin/main
 ```
 
-**3. Rebase onto main:**
-```bash
-git fetch
-git rebase -i origin/main
-```
-
-Resolve conflicts: `git add <files>` then `git rebase --continue`.
+On conflicts: fix the files, `git add <files>`, then `GIT_EDITOR=true git rebase --continue`.
 If stuck: `git rebase --abort`.
 
 ## Verify Before Push
 
+Compare against the remote branch to confirm only intended changes differ:
+
 ```bash
-git diff @{u}..HEAD
+git range-diff @{u}...HEAD   # Commit-by-commit comparison with the pushed branch
+git diff @{u} HEAD --stat    # Tree differences (also shows changes from main after a rebase)
 ```
 
-Should show only your intended changes. If wrong:
-```bash
-git reset --hard @{u}  # Reset to remote, start over
-```
+If wrong, restore the pushed state: `git reset --hard @{u}`.
 
 If correct:
 ```bash
-git push -f
+git push --force-with-lease
 ```
 
-## Non-Interactive Rebase
+## Reordering or Regrouping Commits
 
-When automating rebase (e.g., in scripts or Claude Code), use `GIT_SEQUENCE_EDITOR` to provide the rebase plan non-interactively.
-
-**1. Create a rebase script:**
+To squash or reorder arbitrary commits, write the todo list to a file and use it as the sequence
+editor:
 
 ```bash
-#!/bin/bash
-cat > "$1" << 'EOF'
+cat > /tmp/rebase-todo << 'EOF'
 pick abc1234 First commit message
-fixup def5678 Second commit (squash into first)
+fixup def5678 Squash into first, discard message
 pick ghi9012 Third commit message
-fixup jkl3456 Fourth commit (squash into third)
 EOF
+GIT_SEQUENCE_EDITOR="cp /tmp/rebase-todo" git rebase -i <base>
 ```
 
-**2. Execute non-interactive rebase:**
-
-```bash
-chmod +x /tmp/rebase-script.sh
-GIT_SEQUENCE_EDITOR=/tmp/rebase-script.sh git rebase -i --root
-```
-
-**Rebase commands:**
 | Command | Effect |
 |---------|--------|
 | `pick` | Keep commit as-is |
 | `fixup` | Squash into previous, discard message |
-| `squash` | Squash into previous, combine messages |
-| `reword` | Keep commit, edit message |
+| `squash` | Squash into previous, combine messages (opens an editor; avoid) |
+| `exec <cmd>` | Run a shell command, e.g. `git commit --amend -q -m "new message"` |
 | `drop` | Remove commit |
 
-## When Rebase Won't Work
+Reordering conflicts when a moved commit depends on changes from a commit it now precedes. Use the
+`/cleanup-commits` skill in that case; it falls back to resetting and recommitting by group.
 
-Rebase fails with conflicts when **reordering** commits that have dependencies:
+## Merging the PR
 
-```
-# This will conflict if commit B modifies files created by commit C
-pick A
-fixup C  # Was originally after B
-pick B   # Creates files that C modifies
-```
-
-**Solution:** Use the soft reset approach in `/cleanup-commits` command, which avoids conflicts by removing all commits and recommitting in logical groups.
-
-## Merge to Main
-
-After PR approval, merge with a merge commit to preserve branch history:
+After approval, rebase the branch onto `origin/main` (Squash Workflow step 2) and push, then merge
+with a merge commit. Main keeps a semi-linear history: each branch's distinct commits sit in a
+straight line, closed by a merge commit.
 
 ```bash
 git checkout main
-git pull
-git merge --no-ff <your-branch-name>
+git pull --ff-only
+git merge --no-ff <branch>
 git push
 ```
 
-The PR should appear as merged. History in main must be linear (no branched paths) with all distinct commits plus the merge commit visible.
+The PR then shows as merged.

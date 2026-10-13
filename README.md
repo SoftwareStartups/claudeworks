@@ -1,6 +1,6 @@
 # ClaudeWorks
 
-A Claude Code plugin marketplace with skills for Python development and git workflows.
+A Claude Code plugin marketplace with skills for Python development, git workflows and architecture decision records.
 
 ## Installation
 
@@ -17,10 +17,12 @@ This creates the `claudeworks` plugin group. Then install plugins from it:
 # CLI
 claude plugin install "python-tools@claudeworks"
 claude plugin install "workflow@claudeworks"
+claude plugin install "adr@claudeworks"
 
 # Or in-session
 /plugin install python-tools@claudeworks
 /plugin install workflow@claudeworks
+/plugin install adr@claudeworks
 ```
 
 Or browse available plugins interactively with `/plugin > Discover`.
@@ -41,6 +43,13 @@ Git workflow tools for clean commits and rebasing.
 
 - **git-rebase** - Create clean, reviewable commits using `--fixup` and autosquash rebase
 - **cleanup-commits** - `/cleanup-commits`, groups and squashes the branch's commits before a PR (manual invocation only)
+
+### adr
+
+Architecture decision records in MADR format, with a few stricter conventions.
+
+- **adr** - Write, review, number and supersede ADRs. Claude writes the record, but the decision and its reasons come from people. Bundles a template and a stdlib-only `check_adr.py` that checks sections, metadata, file names, duplicate numbers and `superseded by` links
+- **adr-init** - `/adr-init`, sets up a repo for ADRs: folder, checker in CI, PR checklist and a CLAUDE.md note (manual invocation only)
 
 ## Development
 

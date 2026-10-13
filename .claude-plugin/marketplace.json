@@ -1,6 +1,6 @@
 {
   "name": "claudeworks",
-  "description": "Claude Code plugins for Python development and git workflows",
+  "description": "Claude Code plugins for Python development, git workflows and architecture decisions",
   "owner": {
     "name": "SoftwareStartups",
     "url": "https://github.com/SoftwareStartups"
@@ -16,6 +16,12 @@
       "name": "workflow",
       "description": "Git workflow tools for clean commits and rebasing",
       "source": "./plugins/workflow",
+      "category": "development"
+    },
+    {
+      "name": "adr",
+      "description": "Write, review and check architecture decision records (MADR)",
+      "source": "./plugins/adr",
       "category": "development"
     }
   ]

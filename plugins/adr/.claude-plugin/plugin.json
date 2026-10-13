@@ -1,0 +1,9 @@
+{
+  "name": "adr",
+  "version": "0.1.0",
+  "description": "Write, review and check architecture decision records (MADR)",
+  "author": {
+    "name": "SoftwareStartups",
+    "url": "https://github.com/SoftwareStartups"
+  }
+}

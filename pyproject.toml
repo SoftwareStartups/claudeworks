@@ -28,11 +28,11 @@ select = ["E", "F", "I", "N", "W", "UP"]
 [tool.pyright]
 pythonVersion = "3.12"
 typeCheckingMode = "strict"
-extraPaths = ["plugins/python-tools/skills/update-deps"]
+extraPaths = ["plugins/python-tools/skills/update-deps", "plugins/adr/skills/adr"]
 exclude = [".venv"]
 venvPath = "."
 venv = ".venv"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["plugins/python-tools/skills/update-deps"]
+pythonpath = ["plugins/python-tools/skills/update-deps", "plugins/adr/skills/adr"]

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ClaudeWorks - A Claude Code plugin marketplace with skills for Python development and git workflows.
+ClaudeWorks - A Claude Code plugin marketplace with skills for Python development, git workflows and architecture decision records.
 
 ## Commands
 
@@ -33,6 +33,7 @@ task all         # Run all checks and tests
 - `plugins/` - Claude Code plugins (skills)
   - `python-tools/` - Python development tools (update-deps, with bundled `update_deps.py`)
   - `workflow/` - Git workflow tools (git-rebase, cleanup-commits)
+  - `adr/` - Architecture decision records (adr, with bundled `check_adr.py`; adr-init)
 - `tests/` - Tests for bundled scripts (script dirs are on the pytest/pyright path)
 
 ## Plugin Format
